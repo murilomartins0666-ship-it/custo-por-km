@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>Custo por Km</title>
+  <title>Controle de Entregas</title>
   <style>
     :root {
       --bg: #0f172a;
@@ -17,6 +17,8 @@
       --accent-dark: #16a34a;
       --danger: #ef4444;
       --warning: #f59e0b;
+      --blue: #3b82f6;
+      --purple: #a855f7;
       --border: #334155;
     }
 
@@ -39,22 +41,58 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 16px;
+      margin-bottom: 14px;
       padding-top: 8px;
     }
 
     header h1 {
-      font-size: 1.35rem;
+      font-size: 1.3rem;
       font-weight: 700;
     }
 
     header span {
-      font-size: 0.75rem;
+      font-size: 0.72rem;
       color: var(--accent);
       background: rgba(34, 197, 94, 0.15);
       padding: 4px 10px;
       border-radius: 999px;
       font-weight: 600;
+    }
+
+    /* NAVEGAÇÃO POR ABAS */
+    .tabs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      background: var(--card);
+      padding: 6px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      margin-bottom: 16px;
+    }
+
+    .tab-btn {
+      background: transparent;
+      color: var(--muted);
+      padding: 10px;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+    }
+
+    .tab-btn.active {
+      background: var(--accent);
+      color: #052e16;
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
     }
 
     .card {
@@ -170,7 +208,7 @@
     }
 
     .stat-value {
-      font-size: 1.2rem;
+      font-size: 1.15rem;
       font-weight: 700;
       margin-top: 4px;
     }
@@ -178,6 +216,83 @@
     .stat-value.green { color: var(--accent); }
     .stat-value.yellow { color: var(--warning); }
     .stat-value.red { color: var(--danger); }
+    .stat-value.blue { color: var(--blue); }
+
+    /* GRÁFICOS */
+    .chart-container {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 12px 10px;
+      margin-top: 8px;
+    }
+
+    .bar-chart {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      height: 150px;
+      gap: 8px;
+      padding-top: 20px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .bar-col {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      height: 100%;
+      justify-content: flex-end;
+    }
+
+    .bar-value {
+      font-size: 0.65rem;
+      color: var(--muted);
+      margin-bottom: 4px;
+      white-space: nowrap;
+    }
+
+    .bar-fill {
+      width: 100%;
+      max-width: 34px;
+      background: linear-gradient(180deg, #4ade80 0%, #16a34a 100%);
+      border-radius: 6px 6px 0 0;
+      min-height: 4px;
+      transition: height 0.3s ease;
+    }
+
+    .bar-label {
+      font-size: 0.68rem;
+      color: var(--muted);
+      margin-top: 6px;
+      text-align: center;
+    }
+
+    /* BARRA DE PLATAFORMAS */
+    .plat-row {
+      margin-bottom: 10px;
+    }
+
+    .plat-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.8rem;
+      margin-bottom: 4px;
+    }
+
+    .plat-track {
+      width: 100%;
+      height: 10px;
+      background: var(--card-alt);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .plat-progress {
+      height: 100%;
+      border-radius: 999px;
+    }
 
     .history-item {
       background: var(--bg);
@@ -204,7 +319,8 @@
       background: var(--card-alt);
       padding: 3px 8px;
       border-radius: 6px;
-      color: var(--muted);
+      color: var(--text);
+      font-weight: 500;
     }
 
     .history-details {
@@ -230,144 +346,211 @@
       font-size: 0.85rem;
       padding: 20px 0;
     }
+
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--accent);
+      color: #052e16;
+      padding: 10px 18px;
+      border-radius: 999px;
+      font-weight: 700;
+      font-size: 0.85rem;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+      display: none;
+      z-index: 99;
+    }
   </style>
 </head>
 <body>
 
   <header>
-    <h1>Custo por Km</h1>
+    <h1>Controle de Entregas</h1>
     <span>Memória: 5 Anos</span>
   </header>
 
-  <!-- FORMULÁRIO DE LANÇAMENTO -->
-  <div class="card">
-    <div class="card-title">Novo Turno / Corrida</div>
+  <!-- ABAS -->
+  <div class="tabs">
+    <button class="tab-btn active" id="tabBtnForm" onclick="switchTab('form')">Lançar Turno</button>
+    <button class="tab-btn" id="tabBtnStats" onclick="switchTab('stats')">Histórico & Gráficos</button>
+  </div>
 
-    <div class="grid-2">
-      <div class="field">
-        <label for="date">Data</label>
-        <input type="date" id="date" />
+  <!-- ABA 1: FORMULÁRIO DE LANÇAMENTO -->
+  <div id="tabForm" class="tab-content active">
+    <div class="card">
+      <div class="card-title">Novo Registro do Dia</div>
+
+      <div class="grid-2">
+        <div class="field">
+          <label for="date">Data</label>
+          <input type="date" id="date" />
+        </div>
+        <div class="field">
+          <label for="platform">Aplicativo</label>
+          <select id="platform">
+            <option value="iFood">iFood</option>
+            <option value="99 / 99 Food">99 / 99 Food</option>
+            <option value="Keeta Entregador">Keeta Entregador</option>
+            <option value="Misto (Vários Apps)">Misto (Vários Apps)</option>
+            <option value="Particular / Outros">Particular / Outros</option>
+          </select>
+        </div>
       </div>
+
+      <div class="grid-2">
+        <div class="field">
+          <label for="earnings">Ganho Bruto (R$)</label>
+          <input type="text" inputmode="decimal" id="earnings" placeholder="Ex: 145,50" />
+        </div>
+        <div class="field">
+          <label for="hours">Tempo Trabalhado (HH:MM)</label>
+          <input type="text" inputmode="numeric" id="hours" placeholder="Ex: 02:45" maxlength="5" />
+          <div class="hint" id="hoursPreview">Ex: 02:45 = 2,75 horas</div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="field">
+          <label for="fuelCost">Combustível Gasto (R$)</label>
+          <input type="text" inputmode="decimal" id="fuelCost" placeholder="Ex: 22,00" />
+        </div>
+        <div class="field">
+          <label for="extraCost">Outros Gastos (R$)</label>
+          <input type="text" inputmode="decimal" id="extraCost" placeholder="Ex: 0,00" />
+        </div>
+      </div>
+
       <div class="field">
-        <label for="platform">Plataforma</label>
-        <select id="platform">
-          <option value="iFood">iFood</option>
-          <option value="99 / 99 Food">99 / 99 Food</option>
-          <option value="Misto (iFood + 99)">Misto (iFood + 99)</option>
-          <option value="Particular / Outros">Particular / Outros</option>
+        <label for="fuelPriceRef">Preço do Litro Pago (R$/L - Opcional)</label>
+        <input type="text" inputmode="decimal" id="fuelPriceRef" placeholder="Ex: 6,50" />
+      </div>
+
+      <button class="btn-primary" onclick="saveEntry()">Salvar no Histórico</button>
+    </div>
+
+    <!-- RESUMO RÁPIDO DO MÊS ATUAL -->
+    <div class="card">
+      <div class="card-title">Resumo Rápido (Este Mês)</div>
+      <div class="stats-grid">
+        <div class="stat-box">
+          <div class="stat-label">Lucro Líquido</div>
+          <div class="stat-value green" id="quickMonthNet">R$ 0,00</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">Média Ganho / Hora</div>
+          <div class="stat-value blue" id="quickMonthHour">R$ 0,00/h</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ABA 2: HISTÓRICO & GRÁFICOS -->
+  <div id="tabStats" class="tab-content">
+    <div class="card">
+      <div class="card-title">
+        <span>Desempenho Geral</span>
+        <select id="periodFilter" onchange="render()" style="width: auto; padding: 5px 8px; font-size: 0.8rem;">
+          <option value="month">Mês Atual</option>
+          <option value="year">Ano Atual</option>
+          <option value="all">Últimos 5 Anos (Tudo)</option>
         </select>
       </div>
-    </div>
 
-    <div class="grid-2">
-      <div class="field">
-        <label for="earnings">Ganho Bruto (R$)</label>
-        <input type="text" inputmode="decimal" id="earnings" placeholder="Ex: 120,50" />
-      </div>
-      <div class="field">
-        <label for="km">Km Rodados</label>
-        <input type="text" inputmode="decimal" id="km" placeholder="Ex: 85,4" />
-      </div>
-    </div>
-
-    <div class="grid-2">
-      <div class="field">
-        <label for="hours">Tempo Trabalhado (HH:MM)</label>
-        <input type="text" inputmode="numeric" id="hours" placeholder="Ex: 02:45" maxlength="5" />
-        <div class="hint" id="hoursPreview">Ex: 02:45 = 2,75 horas</div>
-      </div>
-      <div class="field">
-        <label for="fuelPrice">Preço Combustível (R$/L)</label>
-        <input type="text" inputmode="decimal" id="fuelPrice" placeholder="Ex: 6,50" />
+      <div class="stats-grid">
+        <div class="stat-box">
+          <div class="stat-label">Ganho Bruto</div>
+          <div class="stat-value" id="statGross">R$ 0,00</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">Lucro Líquido</div>
+          <div class="stat-value green" id="statNet">R$ 0,00</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">Total de Horas</div>
+          <div class="stat-value blue" id="statHours">00:00h</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">Ganho / Hora Líquido</div>
+          <div class="stat-value green" id="statPerHour">R$ 0,00/h</div>
+        </div>
       </div>
     </div>
 
-    <div class="grid-2">
-      <div class="field">
-        <label for="consumption">Consumo da Moto (Km/L)</label>
-        <input type="text" inputmode="decimal" id="consumption" placeholder="Ex: 42" />
-      </div>
-      <div class="field">
-        <label for="extraCost">Outros Gastos (R$)</label>
-        <input type="text" inputmode="decimal" id="extraCost" placeholder="Ex: 0,00" />
+    <!-- GRÁFICO 1: LUCRO DOS ÚLTIMOS LANÇAMENTOS -->
+    <div class="card">
+      <div class="card-title">Gráfico: Lucro Líquido Recente</div>
+      <div class="chart-container" id="dailyChartBox">
+        <div class="empty-state">Salve lançamentos para ver o gráfico.</div>
       </div>
     </div>
 
-    <button class="btn-primary" onclick="saveEntry()">Salvar Registro</button>
-  </div>
-
-  <!-- RESUMO DO PERÍODO -->
-  <div class="card">
-    <div class="card-title">
-      <span>Resumo do Período</span>
-      <select id="periodFilter" onchange="render()" style="width: auto; padding: 5px 8px; font-size: 0.8rem;">
-        <option value="all">Últimos 5 anos (Tudo)</option>
-        <option value="month">Mês Atual</option>
-        <option value="year">Ano Atual</option>
-      </select>
+    <!-- GRÁFICO 2: GANHOS POR APLICATIVO -->
+    <div class="card">
+      <div class="card-title">Gráfico: Ganhos por Aplicativo</div>
+      <div class="chart-container" id="platformChartBox">
+        <div class="empty-state">Nenhum dado registrado ainda.</div>
+      </div>
     </div>
 
-    <div class="stats-grid">
-      <div class="stat-box">
-        <div class="stat-label">Lucro Líquido</div>
-        <div class="stat-value green" id="statNet">R$ 0,00</div>
+    <!-- LISTA COMPLETA DO HISTÓRICO -->
+    <div class="card">
+      <div class="card-title">
+        <span>Turnos Salvos</span>
+        <span id="recordCount" style="font-size: 0.78rem; color: var(--muted);">0 registros</span>
       </div>
-      <div class="stat-box">
-        <div class="stat-label">Ganho / Hora Líquido</div>
-        <div class="stat-value green" id="statPerHour">R$ 0,00/h</div>
-      </div>
-      <div class="stat-box">
-        <div class="stat-label">Custo por Km</div>
-        <div class="stat-value yellow" id="statCostKm">R$ 0,00/km</div>
-      </div>
-      <div class="stat-box">
-        <div class="stat-label">Lucro por Km</div>
-        <div class="stat-value" id="statNetKm">R$ 0,00/km</div>
+      <div id="historyList"></div>
+    </div>
+
+    <!-- BACKUP -->
+    <div class="card">
+      <div class="card-title">Backup dos 5 Anos</div>
+      <p style="font-size: 0.8rem; color: var(--muted); line-height: 1.4;">
+        Tudo fica salvo por até 5 anos neste aparelho. Exporte uma cópia de segurança quando quiser guardar nos Arquivos do iPhone.
+      </p>
+      <div class="backup-row">
+        <button class="btn-secondary" onclick="exportBackup()">Exportar Backup</button>
+        <button class="btn-secondary" onclick="document.getElementById('importFile').click()">Importar Backup</button>
+        <input type="file" id="importFile" accept=".json" style="display:none" onchange="importBackup(event)" />
       </div>
     </div>
   </div>
 
-  <!-- HISTÓRICO -->
-  <div class="card">
-    <div class="card-title">
-      <span>Histórico Salvo</span>
-      <span id="recordCount" style="font-size: 0.78rem; color: var(--muted);">0 registros</span>
-    </div>
-    <div id="historyList"></div>
-  </div>
-
-  <!-- BACKUP DE SEGURANÇA -->
-  <div class="card">
-    <div class="card-title">Backup dos 5 Anos</div>
-    <p style="font-size: 0.8rem; color: var(--muted); line-height: 1.4;">
-      Os dados ficam salvos neste aparelho por até 5 anos. Exporte uma cópia de segurança sempre que quiser guardar nos Arquivos do iPhone.
-    </p>
-    <div class="backup-row">
-      <button class="btn-secondary" onclick="exportBackup()">Exportar Backup</button>
-      <button class="btn-secondary" onclick="document.getElementById('importFile').click()">Importar Backup</button>
-      <input type="file" id="importFile" accept=".json" style="display:none" onchange="importBackup(event)" />
-    </div>
-  </div>
+  <div class="toast" id="toast">Salvo na aba Histórico & Gráficos!</div>
 
   <script>
-    const STORAGE_KEY = "custo_por_km_entries_v2";
-    const CONFIG_KEY = "custo_por_km_defaults_v2";
+    const STORAGE_KEY = "controle_entregas_v3";
+    const CONFIG_KEY = "controle_entregas_cfg_v3";
     const FIVE_YEARS_MS = 5 * 365.25 * 24 * 60 * 60 * 1000;
 
-    // Define data de hoje e carrega último preço de combustível/consumo
     window.addEventListener("DOMContentLoaded", () => {
       const today = new Date().toISOString().split("T")[0];
       document.getElementById("date").value = today;
 
       const defaults = JSON.parse(localStorage.getItem(CONFIG_KEY) || "{}");
-      if (defaults.fuelPrice) document.getElementById("fuelPrice").value = defaults.fuelPrice;
-      if (defaults.consumption) document.getElementById("consumption").value = defaults.consumption;
+      if (defaults.fuelPriceRef) document.getElementById("fuelPriceRef").value = defaults.fuelPriceRef;
 
       cleanOldEntries();
       render();
     });
 
-    // Formatação automática ao digitar horas (ex: 245 -> 02:45 ou 2:45)
+    function switchTab(tab) {
+      document.getElementById("tabForm").classList.toggle("active", tab === "form");
+      document.getElementById("tabStats").classList.toggle("active", tab === "stats");
+      document.getElementById("tabBtnForm").classList.toggle("active", tab === "form");
+      document.getElementById("tabBtnStats").classList.toggle("active", tab === "stats");
+      if (tab === "stats") render();
+    }
+
+    function showToast(msg) {
+      const el = document.getElementById("toast");
+      el.textContent = msg;
+      el.style.display = "block";
+      setTimeout(() => { el.style.display = "none"; }, 2500);
+    }
+
+    // Formatação automática HH:MM (ex: 245 -> 02:45)
     const hoursInput = document.getElementById("hours");
     hoursInput.addEventListener("input", (e) => {
       let raw = e.target.value.replace(/[^\d:]/g, "");
@@ -389,7 +572,6 @@
       }
     });
 
-    // Converte texto com vírgula ou ponto para número decimal (ex: "6,50" ou "6.50" -> 6.5)
     function parseDecimal(val) {
       if (!val) return 0;
       const cleaned = String(val).trim().replace(",", ".");
@@ -397,7 +579,6 @@
       return isNaN(num) ? 0 : num;
     }
 
-    // Converte HH:MM ou H.MM para horas decimais
     function parseHoursToDecimal(str) {
       if (!str) return null;
       const clean = str.trim();
@@ -410,7 +591,6 @@
         return h + m / 60;
       }
 
-      // Caso o usuário digite número inteiro (ex: "3" -> 3 horas)
       const num = parseDecimal(clean);
       return num > 0 ? num : null;
     }
@@ -437,7 +617,6 @@
       localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
     }
 
-    // Mantém apenas registros dentro da janela de 5 anos
     function cleanOldEntries() {
       const now = Date.now();
       const entries = getEntries();
@@ -454,36 +633,27 @@
       const date = document.getElementById("date").value;
       const platform = document.getElementById("platform").value;
       const earnings = parseDecimal(document.getElementById("earnings").value);
-      const km = parseDecimal(document.getElementById("km").value);
       const hoursStr = document.getElementById("hours").value;
       const hoursDecimal = parseHoursToDecimal(hoursStr);
-      const fuelPrice = parseDecimal(document.getElementById("fuelPrice").value);
-      const consumption = parseDecimal(document.getElementById("consumption").value);
+      const fuelCost = parseDecimal(document.getElementById("fuelCost").value);
       const extraCost = parseDecimal(document.getElementById("extraCost").value);
+      const fuelPriceRef = parseDecimal(document.getElementById("fuelPriceRef").value);
 
       if (!date) {
         alert("Selecione uma data.");
         return;
       }
-      if (earnings <= 0 || km <= 0) {
-        alert("Preencha o ganho bruto e os Km rodados.");
+      if (earnings <= 0) {
+        alert("Preencha o Ganho Bruto (R$).");
         return;
       }
       if (hoursDecimal === null || hoursDecimal <= 0) {
         alert("Informe um tempo válido no formato HH:MM (ex: 02:45). Minutos devem ir de 00 a 59.");
         return;
       }
-      if (fuelPrice <= 0 || consumption <= 0) {
-        alert("Informe o preço do combustível (ex: 6,50) e o consumo da moto (ex: 42).");
-        return;
-      }
 
-      const litersUsed = km / consumption;
-      const fuelCost = litersUsed * fuelPrice;
       const totalCost = fuelCost + extraCost;
       const netProfit = earnings - totalCost;
-      const costPerKm = totalCost / km;
-      const netPerKm = netProfit / km;
       const netPerHour = netProfit / hoursDecimal;
 
       const entry = {
@@ -491,17 +661,13 @@
         date,
         platform,
         earnings,
-        km,
         hoursDecimal,
         hoursFormatted: formatHoursLabel(hoursDecimal),
-        fuelPrice,
-        consumption,
-        extraCost,
         fuelCost,
+        extraCost,
+        fuelPriceRef,
         totalCost,
         netProfit,
-        costPerKm,
-        netPerKm,
         netPerHour
       };
 
@@ -510,21 +676,21 @@
       entries.sort((a, b) => b.date.localeCompare(a.date));
       setEntries(entries);
 
-      // Salva preço do combustível e consumo como padrão para a próxima vez
-      localStorage.setItem(CONFIG_KEY, JSON.stringify({
-        fuelPrice: document.getElementById("fuelPrice").value,
-        consumption: document.getElementById("consumption").value
-      }));
+      if (fuelPriceRef > 0) {
+        localStorage.setItem(CONFIG_KEY, JSON.stringify({
+          fuelPriceRef: document.getElementById("fuelPriceRef").value
+        }));
+      }
 
-      // Limpa campos variáveis
       document.getElementById("earnings").value = "";
-      document.getElementById("km").value = "";
       document.getElementById("hours").value = "";
+      document.getElementById("fuelCost").value = "";
       document.getElementById("extraCost").value = "";
       document.getElementById("hoursPreview").textContent = "Ex: 02:45 = 2,75 horas";
       document.getElementById("hoursPreview").style.color = "#94a3b8";
 
       render();
+      showToast("Turno salvo na aba Histórico & Gráficos!");
     }
 
     function deleteEntry(id) {
@@ -535,40 +701,128 @@
     }
 
     function render() {
+      const allEntries = getEntries();
       const filter = document.getElementById("periodFilter").value;
       const now = new Date();
       const currentYear = String(now.getFullYear());
       const currentMonth = `${currentYear}-${String(now.getMonth() + 1).padStart(2, "0")}`;
 
-      let entries = getEntries();
+      // Resumo rápido do mês atual na Aba 1
+      const monthEntries = allEntries.filter(e => e.date.startsWith(currentMonth));
+      let mNet = 0, mHours = 0;
+      monthEntries.forEach(e => { mNet += e.netProfit; mHours += e.hoursDecimal; });
+      document.getElementById("quickMonthNet").textContent = formatBRL(mNet);
+      document.getElementById("quickMonthHour").textContent = `${formatBRL(mHours > 0 ? mNet / mHours : 0)}/h`;
+
+      // Filtro da Aba 2
+      let entries = allEntries;
       if (filter === "month") {
-        entries = entries.filter(e => e.date.startsWith(currentMonth));
+        entries = allEntries.filter(e => e.date.startsWith(currentMonth));
       } else if (filter === "year") {
-        entries = entries.filter(e => e.date.startsWith(currentYear));
+        entries = allEntries.filter(e => e.date.startsWith(currentYear));
       }
 
+      let totalGross = 0;
       let totalNet = 0;
-      let totalCost = 0;
-      let totalKm = 0;
       let totalHours = 0;
 
       entries.forEach(e => {
+        totalGross += e.earnings;
         totalNet += e.netProfit;
-        totalCost += e.totalCost;
-        totalKm += e.km;
         totalHours += e.hoursDecimal;
       });
 
-      const avgCostKm = totalKm > 0 ? totalCost / totalKm : 0;
-      const avgNetKm = totalKm > 0 ? totalNet / totalKm : 0;
       const avgNetHour = totalHours > 0 ? totalNet / totalHours : 0;
 
+      document.getElementById("statGross").textContent = formatBRL(totalGross);
       document.getElementById("statNet").textContent = formatBRL(totalNet);
+      document.getElementById("statHours").textContent = `${formatHoursLabel(totalHours)}h`;
       document.getElementById("statPerHour").textContent = `${formatBRL(avgNetHour)}/h`;
-      document.getElementById("statCostKm").textContent = `${formatBRL(avgCostKm)}/km`;
-      document.getElementById("statNetKm").textContent = `${formatBRL(avgNetKm)}/km`;
       document.getElementById("recordCount").textContent = `${entries.length} registro(s)`;
 
+      renderDailyChart(entries);
+      renderPlatformChart(entries);
+      renderHistoryList(entries);
+    }
+
+    function renderDailyChart(entries) {
+      const box = document.getElementById("dailyChartBox");
+      if (entries.length === 0) {
+        box.innerHTML = `<div class="empty-state">Salve lançamentos para ver o gráfico.</div>`;
+        return;
+      }
+
+      // Agrupa por data e pega os últimos 7 dias com movimento
+      const byDate = {};
+      entries.forEach(e => {
+        byDate[e.date] = (byDate[e.date] || 0) + e.netProfit;
+      });
+
+      const dates = Object.keys(byDate).sort().slice(-7);
+      const maxVal = Math.max(...dates.map(d => Math.max(0, byDate[d])), 1);
+
+      const barsHTML = dates.map(d => {
+        const val = byDate[d];
+        const pct = Math.max(4, Math.round((Math.max(0, val) / maxVal) * 100));
+        const [, m, day] = d.split("-");
+        const shortVal = val >= 100 ? `R$${Math.round(val)}` : `R$${val.toFixed(0)}`;
+        return `
+          <div class="bar-col">
+            <div class="bar-value">${shortVal}</div>
+            <div class="bar-fill" style="height: ${pct}%;"></div>
+            <div class="bar-label">${day}/${m}</div>
+          </div>
+        `;
+      }).join("");
+
+      box.innerHTML = `<div class="bar-chart">${barsHTML}</div>`;
+    }
+
+    function renderPlatformChart(entries) {
+      const box = document.getElementById("platformChartBox");
+      if (entries.length === 0) {
+        box.innerHTML = `<div class="empty-state">Nenhum dado registrado ainda.</div>`;
+        return;
+      }
+
+      const byPlat = {};
+      let sumNet = 0;
+      entries.forEach(e => {
+        const val = Math.max(0, e.netProfit);
+        byPlat[e.platform] = (byPlat[e.platform] || 0) + val;
+        sumNet += val;
+      });
+
+      const colors = {
+        "iFood": "#ef4444",
+        "99 / 99 Food": "#f59e0b",
+        "Keeta Entregador": "#eab308",
+        "Misto (Vários Apps)": "#3b82f6",
+        "Particular / Outros": "#a855f7"
+      };
+
+      const rows = Object.entries(byPlat)
+        .sort((a, b) => b[1] - a[1])
+        .map(([plat, val]) => {
+          const pct = sumNet > 0 ? Math.round((val / sumNet) * 100) : 0;
+          const color = colors[plat] || "#22c55e";
+          return `
+            <div class="plat-row">
+              <div class="plat-header">
+                <span>${plat}</span>
+                <strong>${formatBRL(val)} (${pct}%)</strong>
+              </div>
+              <div class="plat-track">
+                <div class="plat-progress" style="width: ${pct}%; background: ${color};"></div>
+              </div>
+            </div>
+          `;
+        }).join("");
+
+      box.innerHTML = rows;
+    }
+
+    function renderHistoryList(entries) {
       const listEl = document.getElementById("historyList");
       if (entries.length === 0) {
         listEl.innerHTML = `<div class="empty-state">Nenhum registro neste período.</div>`;
@@ -578,6 +832,9 @@
       listEl.innerHTML = entries.map(e => {
         const [y, m, d] = e.date.split("-");
         const dateBR = `${d}/${m}/${y}`;
+        const fuelInfo = e.fuelPriceRef > 0
+          ? ` • Litro: R$ ${e.fuelPriceRef.toFixed(2).replace(".", ",")}`
+          : "";
         return `
           <div class="history-item">
             <div class="history-top">
@@ -588,9 +845,8 @@
               <button class="btn-danger" onclick="deleteEntry(${e.id})">Excluir</button>
             </div>
             <div class="history-details">
-              Bruto: <strong>${formatBRL(e.earnings)}</strong> • Líquido: <strong style="color:#22c55e">${formatBRL(e.netProfit)}</strong><br/>
-              Rodado: <strong>${e.km.toFixed(1).replace(".", ",")} km</strong> em <strong>${e.hoursFormatted}h</strong> (${formatBRL(e.netPerHour)}/h)<br/>
-              Gasolina: R$ ${e.fuelPrice.toFixed(2).replace(".", ",")}/L • Custo: <strong>${formatBRL(e.costPerKm)}/km</strong>
+              Bruto: <strong>${formatBRL(e.earnings)}</strong> • Gastos: <strong>${formatBRL(e.totalCost)}</strong><br/>
+              Líquido: <strong style="color:#22c55e">${formatBRL(e.netProfit)}</strong> • Tempo: <strong>${e.hoursFormatted}h</strong> (${formatBRL(e.netPerHour)}/h)${fuelInfo}
             </div>
           </div>
         `;
@@ -603,7 +859,7 @@
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `backup-custo-por-km-${new Date().toISOString().split("T")[0]}.json`;
+      a.download = `backup-entregas-${new Date().toISOString().split("T")[0]}.json`;
       a.click();
       URL.revokeObjectURL(url);
     }
@@ -633,3 +889,4 @@
   </script>
 </body>
 </html>
+
