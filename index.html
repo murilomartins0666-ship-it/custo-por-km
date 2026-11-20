@@ -4,946 +4,632 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-  <meta name="apple-mobile-web-app-title" content="Custo por Km" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <title>Custo por Km</title>
   <style>
     :root {
-      --bg: #F6F5EF;
-      --card: #FFFFFF;
-      --text: #1B2A22;
-      --muted: #5C6B62;
-      --border: #E5E2D9;
-      --green: #2D5A43;
-      --green-dark: #234735;
-      --red: #C84B31;
-      --soft: #E6EFE9;
+      --bg: #0f172a;
+      --card: #1e293b;
+      --card-alt: #263348;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --accent: #22c55e;
+      --accent-dark: #16a34a;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --border: #334155;
     }
-    body.dark {
-      --bg: #111915;
-      --card: #1B2620;
-      --text: #F2F5F3;
-      --muted: #9EB0A6;
-      --border: #2C3E34;
-      --soft: #24362C;
-    }
+
     * {
       box-sizing: border-box;
-      -webkit-tap-highlight-color: transparent;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    }
-    body {
       margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    body {
       background: var(--bg);
       color: var(--text);
-      padding-bottom: 92px;
-      transition: background 0.2s, color 0.2s;
-    }
-    .wrap {
-      max-width: 560px;
+      padding: 16px 16px 90px;
+      max-width: 520px;
       margin: 0 auto;
-      padding: 16px;
     }
+
     header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 14px;
+      margin-bottom: 16px;
+      padding-top: 8px;
     }
-    h1 {
-      margin: 0;
-      font-size: 21px;
-      font-weight: 800;
-      letter-spacing: -0.3px;
-    }
-    .top-actions {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-    }
-    .pill-badge {
-      border: 1px solid var(--border);
-      background: var(--card);
-      color: var(--muted);
-      padding: 6px 12px;
-      border-radius: 999px;
-      font-size: 12px;
-      font-weight: 600;
-    }
-    .icon-btn {
-      width: 36px;
-      height: 36px;
-      border-radius: 999px;
-      border: 1px solid var(--border);
-      background: var(--card);
-      color: var(--text);
-      font-size: 15px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .pill-row {
-      display: flex;
-      gap: 8px;
-      overflow-x: auto;
-      padding-bottom: 4px;
-      margin-bottom: 14px;
-    }
-    .chip {
-      border: 1px solid var(--border);
-      background: var(--card);
-      color: var(--muted);
-      padding: 8px 15px;
-      border-radius: 999px;
-      font-size: 13px;
-      font-weight: 500;
-      white-space: nowrap;
-      cursor: pointer;
-    }
-    .chip.active {
-      background: var(--green);
-      color: #FFFFFF;
-      border-color: var(--green);
+
+    header h1 {
+      font-size: 1.35rem;
       font-weight: 700;
     }
+
+    header span {
+      font-size: 0.75rem;
+      color: var(--accent);
+      background: rgba(34, 197, 94, 0.15);
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-weight: 600;
+    }
+
     .card {
       background: var(--card);
       border: 1px solid var(--border);
-      border-radius: 22px;
-      padding: 18px;
-      margin-bottom: 12px;
-    }
-    .muted {
-      color: var(--muted);
-      font-size: 13px;
-    }
-    .big-val {
-      font-size: 36px;
-      font-weight: 800;
-      color: var(--green);
-      margin: 6px 0 4px;
-      letter-spacing: -0.5px;
-    }
-    .big-val.neg {
-      color: var(--red);
-    }
-    .meta-box {
-      margin-top: 14px;
-      padding-top: 12px;
-      border-top: 1px solid var(--border);
-    }
-    .meta-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 12px;
-      gap: 8px;
-    }
-    .meta-input {
-      width: 72px;
-      padding: 4px 6px;
-      border-radius: 8px;
-      border: 1px solid var(--border);
-      background: transparent;
-      color: var(--text);
-      font-weight: 700;
-      font-size: 13px;
-      text-align: right;
-    }
-    .bar-bg {
-      width: 100%;
-      height: 10px;
-      background: rgba(128, 128, 128, 0.18);
-      border-radius: 999px;
-      overflow: hidden;
-      margin-top: 8px;
-    }
-    .bar-fill {
-      height: 100%;
-      background: var(--green);
-      width: 0%;
-      transition: width 0.25s ease;
-    }
-    .grid3 {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-      margin-bottom: 12px;
-    }
-    .metric {
-      background: var(--card);
-      border: 1px solid var(--border);
       border-radius: 16px;
-      padding: 12px 8px;
-      text-align: center;
-    }
-    .metric strong {
-      display: block;
-      margin-top: 4px;
-      font-size: 15px;
-    }
-    .btn-main {
-      width: 100%;
-      padding: 15px;
-      border: 0;
-      border-radius: 16px;
-      background: var(--green);
-      color: #FFFFFF;
-      font-size: 16px;
-      font-weight: 700;
-      cursor: pointer;
-      margin-bottom: 16px;
-    }
-    .btn-main:active {
-      background: var(--green-dark);
-    }
-    .sec-title {
-      font-size: 15px;
-      font-weight: 700;
-      margin: 0 0 10px 2px;
-    }
-    .item {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 13px 15px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 8px;
-      cursor: pointer;
-    }
-    .item-left {
-      min-width: 0;
-      padding-right: 10px;
-    }
-    .item-obs {
-      font-size: 12px;
-      color: var(--muted);
-      margin-top: 2px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .pos {
-      color: var(--green);
-      font-weight: 700;
-      white-space: nowrap;
-    }
-    .neg {
-      color: var(--red);
-      font-weight: 700;
-      white-space: nowrap;
-    }
-    .hidden {
-      display: none !important;
-    }
-    nav {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      background: var(--bg);
-      border-top: 1px solid var(--border);
-      z-index: 10;
-    }
-    .nav-inner {
-      max-width: 560px;
-      margin: 0 auto;
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      padding: 6px;
-      gap: 4px;
-    }
-    .nav-btn {
-      border: 0;
-      background: transparent;
-      color: var(--muted);
-      padding: 8px 4px;
-      border-radius: 14px;
-      font-size: 12px;
-      cursor: pointer;
-      line-height: 1.3;
-    }
-    .nav-btn.active {
-      background: var(--soft);
-      color: var(--green);
-      font-weight: 700;
-    }
-    body.dark .nav-btn.active {
-      color: #FFFFFF;
-    }
-    .modal {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.55);
-      display: none;
-      align-items: center;
-      justify-content: center;
       padding: 16px;
-      z-index: 30;
+      margin-bottom: 14px;
     }
-    .modal.open {
-      display: flex;
-    }
-    .modal-box {
-      width: 100%;
-      max-width: 430px;
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 22px;
-      padding: 18px;
-      max-height: 90vh;
-      overflow-y: auto;
-    }
-    .field {
-      margin-bottom: 10px;
-    }
-    .field label {
-      display: block;
-      font-size: 12px;
-      color: var(--muted);
-      margin-bottom: 4px;
-    }
-    .field input {
-      width: 100%;
-      padding: 10px 11px;
-      border-radius: 12px;
-      border: 1px solid var(--border);
-      background: transparent;
+
+    .card-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-bottom: 12px;
       color: var(--text);
-      font-size: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
-    .row2 {
+
+    .grid-2 {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 10px;
     }
-    .actions {
+
+    .field {
+      margin-bottom: 10px;
+    }
+
+    label {
+      display: block;
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+
+    input, select {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 11px 12px;
+      border-radius: 10px;
+      font-size: 1rem;
+      outline: none;
+    }
+
+    input:focus, select:focus {
+      border-color: var(--accent);
+    }
+
+    .hint {
+      font-size: 0.72rem;
+      color: var(--muted);
+      margin-top: 3px;
+    }
+
+    button {
+      width: 100%;
+      padding: 13px;
+      border: none;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.1s ease;
+    }
+
+    button:active {
+      transform: scale(0.98);
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #052e16;
+      margin-top: 6px;
+    }
+
+    .btn-secondary {
+      background: var(--card-alt);
+      color: var(--text);
+      border: 1px solid var(--border);
+      font-size: 0.85rem;
+      padding: 10px;
+    }
+
+    .btn-danger {
+      background: rgba(239, 68, 68, 0.15);
+      color: var(--danger);
+      padding: 6px 10px;
+      font-size: 0.78rem;
+      width: auto;
+      border-radius: 8px;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .stat-box {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+    }
+
+    .stat-label {
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+
+    .stat-value {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-top: 4px;
+    }
+
+    .stat-value.green { color: var(--accent); }
+    .stat-value.yellow { color: var(--warning); }
+    .stat-value.red { color: var(--danger); }
+
+    .history-item {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+      margin-bottom: 10px;
+    }
+
+    .history-top {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      gap: 8px;
-      margin-top: 14px;
+      margin-bottom: 6px;
     }
-    .btn {
-      padding: 10px 14px;
-      border-radius: 12px;
-      border: 1px solid var(--border);
-      background: transparent;
-      color: var(--text);
-      font-size: 14px;
+
+    .history-date {
       font-weight: 600;
-      cursor: pointer;
-      display: inline-block;
+      font-size: 0.9rem;
     }
-    .btn.primary {
-      background: var(--green);
-      color: #FFFFFF;
-      border-color: var(--green);
+
+    .history-badge {
+      font-size: 0.72rem;
+      background: var(--card-alt);
+      padding: 3px 8px;
+      border-radius: 6px;
+      color: var(--muted);
     }
-    .btn.danger {
-      color: var(--red);
-      border-color: var(--red);
+
+    .history-details {
+      font-size: 0.82rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .history-details strong {
+      color: var(--text);
+    }
+
+    .backup-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .empty-state {
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.85rem;
+      padding: 20px 0;
     }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <header>
-      <h1>Custo por Km</h1>
-      <div class="top-actions">
-        <span class="pill-badge" id="statusBadge">Salvo no aparelho</span>
-        <button type="button" class="icon-btn" id="btnTema" aria-label="Alternar tema">🌙</button>
-      </div>
-    </header>
 
-    <section id="tab-inicio">
-      <div class="pill-row" id="filtros">
-        <button type="button" class="chip active" data-p="hoje">Hoje</button>
-        <button type="button" class="chip" data-p="7dias">7 dias</button>
-        <button type="button" class="chip" data-p="mes">Mês</button>
-        <button type="button" class="chip" data-p="ano">Ano</button>
-        <button type="button" class="chip" data-p="tudo">Tudo</button>
-      </div>
+  <header>
+    <h1>Custo por Km</h1>
+    <span>Memória: 5 Anos</span>
+  </header>
 
-      <div class="card">
-        <div class="muted" id="lblLucro">Lucro de hoje</div>
-        <div class="big-val" id="valLucro">R$ 0,00</div>
-        <div class="muted" id="lblResumo">Ganhos R$ 0,00 · Custos R$ 0,00</div>
+  <!-- FORMULÁRIO DE LANÇAMENTO -->
+  <div class="card">
+    <div class="card-title">Novo Turno / Corrida</div>
 
-        <div class="meta-box">
-          <div class="meta-top">
-            <span class="muted">Meta de lucro do dia</span>
-            <span>
-              <strong id="valHojeMeta">R$ 0,00</strong> de R$
-              <input id="inpMeta" class="meta-input" type="number" step="1" min="1" value="120" />
-            </span>
-          </div>
-          <div class="bar-bg">
-            <div class="bar-fill" id="barMeta"></div>
-          </div>
-        </div>
-      </div>
-
-      <div class="grid3">
-        <div class="metric">
-          <span class="muted">Custo por km</span>
-          <strong id="mCustoKm">—</strong>
-        </div>
-        <div class="metric">
-          <span class="muted">Margem</span>
-          <strong id="mMargem">0%</strong>
-        </div>
-        <div class="metric">
-          <span class="muted">Por hora</span>
-          <strong id="mHora">—</strong>
-        </div>
-      </div>
-
-      <button type="button" class="btn-main" id="btnAbrirModal">Registrar o dia</button>
-
-      <h2 class="sec-title">Últimos registros</h2>
-      <div id="listaRegistros"></div>
-    </section>
-
-    <section id="tab-graficos" class="hidden">
-      <div class="card">
-        <h2 style="margin:0 0 4px;font-size:17px;">Evolução mensal</h2>
-        <div class="muted" id="lblAnoGraf" style="margin-bottom:14px;">Ano atual</div>
-        <div id="listaMeses"></div>
-      </div>
-    </section>
-
-    <section id="tab-combustivel" class="hidden">
-      <div class="card">
-        <h2 style="margin:0 0 12px;font-size:17px;">Calculadora de combustível</h2>
-        <div class="grid3">
-          <div class="field">
-            <label>Km rodados</label>
-            <input id="cKm" type="number" step="0.1" placeholder="0" />
-          </div>
-          <div class="field">
-            <label>Litros</label>
-            <input id="cLitros" type="number" step="0.01" placeholder="0" />
-          </div>
-          <div class="field">
-            <label>Preço/L (R$)</label>
-            <input id="cPreco" type="number" step="0.01" placeholder="6.00" />
-          </div>
-        </div>
-        <div class="row2">
-          <div class="metric">
-            <span class="muted">Média de consumo</span>
-            <strong id="cMedia">—</strong>
-          </div>
-          <div class="metric">
-            <span class="muted">Combustível / km</span>
-            <strong id="cCustoKm">—</strong>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section id="tab-anual" class="hidden">
-      <div class="card">
-        <h2 style="margin:0 0 6px;font-size:17px;">Histórico anual e backup</h2>
-        <p class="muted" style="margin-top:0;">
-          Exporte um arquivo JSON de tempos em tempos para guardar seu histórico por muitos anos com segurança.
-        </p>
-        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;">
-          <button type="button" class="btn primary" id="btnExportJson">Exportar JSON</button>
-          <label class="btn" style="cursor:pointer;">
-            Restaurar JSON
-            <input type="file" accept=".json,application/json" id="inpImportJson" class="hidden" />
-          </label>
-          <button type="button" class="btn" id="btnExportCsv">Exportar CSV</button>
-        </div>
-      </div>
-
-      <div class="card">
-        <h3 style="margin:0 0 10px;font-size:15px;">Consolidado por ano</h3>
-        <div id="listaAnos"></div>
-      </div>
-    </section>
-  </div>
-
-  <div class="modal" id="modal">
-    <form class="modal-box" id="formReg">
-      <h2 style="margin:0 0 12px;font-size:18px;" id="modalTitulo">Registrar o dia</h2>
-
+    <div class="grid-2">
       <div class="field">
-        <label>Data</label>
-        <input type="date" id="fData" required />
+        <label for="date">Data</label>
+        <input type="date" id="date" />
       </div>
-
-      <div class="row2">
-        <div class="field">
-          <label>Ganhos (R$)</label>
-          <input type="number" step="0.01" id="fGanhos" placeholder="0,00" required />
-        </div>
-        <div class="field">
-          <label>Custos / Despesas (R$)</label>
-          <input type="number" step="0.01" id="fCustos" placeholder="0,00" />
-        </div>
-      </div>
-
-      <div class="row2">
-        <div class="field">
-          <label>Km rodados (opcional)</label>
-          <input type="number" step="0.1" id="fKm" placeholder="0" />
-        </div>
-        <div class="field">
-          <label>Horas trabalhadas (opcional)</label>
-          <input type="number" step="0.1" id="fHoras" placeholder="0" />
-        </div>
-      </div>
-
       <div class="field">
-        <label>Observação (opcional)</label>
-        <input type="text" id="fObs" placeholder="Ex: turno noite, gasolina, manutenção..." />
+        <label for="platform">Plataforma</label>
+        <select id="platform">
+          <option value="iFood">iFood</option>
+          <option value="99 / 99 Food">99 / 99 Food</option>
+          <option value="Misto (iFood + 99)">Misto (iFood + 99)</option>
+          <option value="Particular / Outros">Particular / Outros</option>
+        </select>
       </div>
-
-      <div class="actions">
-        <button type="button" class="btn danger hidden" id="btnExcluir">Excluir</button>
-        <div style="display:flex;gap:8px;margin-left:auto;">
-          <button type="button" class="btn" id="btnCancelar">Cancelar</button>
-          <button type="submit" class="btn primary">Salvar</button>
-        </div>
-      </div>
-    </form>
-  </div>
-
-  <nav>
-    <div class="nav-inner">
-      <button type="button" class="nav-btn active" data-tab="inicio">🏠<br />Início</button>
-      <button type="button" class="nav-btn" data-tab="graficos">📊<br />Gráficos</button>
-      <button type="button" class="nav-btn" data-tab="combustivel">⛽<br />Combustível</button>
-      <button type="button" class="nav-btn" data-tab="anual">📄<br />Anual</button>
     </div>
-  </nav>
+
+    <div class="grid-2">
+      <div class="field">
+        <label for="earnings">Ganho Bruto (R$)</label>
+        <input type="text" inputmode="decimal" id="earnings" placeholder="Ex: 120,50" />
+      </div>
+      <div class="field">
+        <label for="km">Km Rodados</label>
+        <input type="text" inputmode="decimal" id="km" placeholder="Ex: 85,4" />
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="field">
+        <label for="hours">Tempo Trabalhado (HH:MM)</label>
+        <input type="text" inputmode="numeric" id="hours" placeholder="Ex: 02:45" maxlength="5" />
+        <div class="hint" id="hoursPreview">Ex: 02:45 = 2,75 horas</div>
+      </div>
+      <div class="field">
+        <label for="fuelPrice">Preço Combustível (R$/L)</label>
+        <input type="text" inputmode="decimal" id="fuelPrice" placeholder="Ex: 6,50" />
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="field">
+        <label for="consumption">Consumo da Moto (Km/L)</label>
+        <input type="text" inputmode="decimal" id="consumption" placeholder="Ex: 42" />
+      </div>
+      <div class="field">
+        <label for="extraCost">Outros Gastos (R$)</label>
+        <input type="text" inputmode="decimal" id="extraCost" placeholder="Ex: 0,00" />
+      </div>
+    </div>
+
+    <button class="btn-primary" onclick="saveEntry()">Salvar Registro</button>
+  </div>
+
+  <!-- RESUMO DO PERÍODO -->
+  <div class="card">
+    <div class="card-title">
+      <span>Resumo do Período</span>
+      <select id="periodFilter" onchange="render()" style="width: auto; padding: 5px 8px; font-size: 0.8rem;">
+        <option value="all">Últimos 5 anos (Tudo)</option>
+        <option value="month">Mês Atual</option>
+        <option value="year">Ano Atual</option>
+      </select>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-box">
+        <div class="stat-label">Lucro Líquido</div>
+        <div class="stat-value green" id="statNet">R$ 0,00</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-label">Ganho / Hora Líquido</div>
+        <div class="stat-value green" id="statPerHour">R$ 0,00/h</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-label">Custo por Km</div>
+        <div class="stat-value yellow" id="statCostKm">R$ 0,00/km</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-label">Lucro por Km</div>
+        <div class="stat-value" id="statNetKm">R$ 0,00/km</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HISTÓRICO -->
+  <div class="card">
+    <div class="card-title">
+      <span>Histórico Salvo</span>
+      <span id="recordCount" style="font-size: 0.78rem; color: var(--muted);">0 registros</span>
+    </div>
+    <div id="historyList"></div>
+  </div>
+
+  <!-- BACKUP DE SEGURANÇA -->
+  <div class="card">
+    <div class="card-title">Backup dos 5 Anos</div>
+    <p style="font-size: 0.8rem; color: var(--muted); line-height: 1.4;">
+      Os dados ficam salvos neste aparelho por até 5 anos. Exporte uma cópia de segurança sempre que quiser guardar nos Arquivos do iPhone.
+    </p>
+    <div class="backup-row">
+      <button class="btn-secondary" onclick="exportBackup()">Exportar Backup</button>
+      <button class="btn-secondary" onclick="document.getElementById('importFile').click()">Importar Backup</button>
+      <input type="file" id="importFile" accept=".json" style="display:none" onchange="importBackup(event)" />
+    </div>
+  </div>
 
   <script>
-    (function () {
-      var K_REG = "cpk_registros_final_v1";
-      var K_META = "cpk_meta_final_v1";
-      var K_COMB = "cpk_comb_final_v1";
-      var K_DARK = "cpk_dark_final_v1";
+    const STORAGE_KEY = "custo_por_km_entries_v2";
+    const CONFIG_KEY = "custo_por_km_defaults_v2";
+    const FIVE_YEARS_MS = 5 * 365.25 * 24 * 60 * 60 * 1000;
 
-      var periodo = "hoje";
-      var editId = null;
-      var registros = [];
-      var meta = 120;
-      var comb = { km: 0, litros: 0, preco: 6 };
+    // Define data de hoje e carrega último preço de combustível/consumo
+    window.addEventListener("DOMContentLoaded", () => {
+      const today = new Date().toISOString().split("T")[0];
+      document.getElementById("date").value = today;
 
-      function lerStorage(chave, padrao) {
-        try {
-          var v = localStorage.getItem(chave);
-          return v !== null ? JSON.parse(v) : padrao;
-        } catch (e) {
-          return padrao;
-        }
+      const defaults = JSON.parse(localStorage.getItem(CONFIG_KEY) || "{}");
+      if (defaults.fuelPrice) document.getElementById("fuelPrice").value = defaults.fuelPrice;
+      if (defaults.consumption) document.getElementById("consumption").value = defaults.consumption;
+
+      cleanOldEntries();
+      render();
+    });
+
+    // Formatação automática ao digitar horas (ex: 245 -> 02:45 ou 2:45)
+    const hoursInput = document.getElementById("hours");
+    hoursInput.addEventListener("input", (e) => {
+      let raw = e.target.value.replace(/[^\d:]/g, "");
+      if (!raw.includes(":") && raw.length >= 3) {
+        const mins = raw.slice(-2);
+        const hrs = raw.slice(0, -2);
+        raw = `${hrs}:${mins}`;
       }
+      e.target.value = raw;
 
-      function gravarStorage(chave, valor) {
-        try {
-          localStorage.setItem(chave, JSON.stringify(valor));
-          return true;
-        } catch (e) {
-          return false;
-        }
-      }
-
-      registros = lerStorage(K_REG, []);
-      if (!Array.isArray(registros)) registros = [];
-      meta = Number(lerStorage(K_META, 120)) || 120;
-      var combSalvo = lerStorage(K_COMB, null);
-      if (combSalvo && typeof combSalvo === "object") {
-        comb = {
-          km: Number(combSalvo.km) || 0,
-          litros: Number(combSalvo.litros) || 0,
-          preco: Number(combSalvo.preco) || 6
-        };
-      }
-      if (lerStorage(K_DARK, false) === true) {
-        document.body.classList.add("dark");
-        document.getElementById("btnTema").textContent = "☀️";
-      }
-
-      if (!gravarStorage("__cpk_test__", 1)) {
-        document.getElementById("statusBadge").textContent = "Modo temporário";
+      const dec = parseHoursToDecimal(raw);
+      const preview = document.getElementById("hoursPreview");
+      if (dec !== null && dec > 0) {
+        preview.textContent = `${raw} = ${dec.toFixed(2).replace(".", ",")} horas`;
+        preview.style.color = "#22c55e";
       } else {
-        try { localStorage.removeItem("__cpk_test__"); } catch (e) {}
+        preview.textContent = "Ex: 02:45 = 2,75 horas";
+        preview.style.color = "#94a3b8";
+      }
+    });
+
+    // Converte texto com vírgula ou ponto para número decimal (ex: "6,50" ou "6.50" -> 6.5)
+    function parseDecimal(val) {
+      if (!val) return 0;
+      const cleaned = String(val).trim().replace(",", ".");
+      const num = parseFloat(cleaned);
+      return isNaN(num) ? 0 : num;
+    }
+
+    // Converte HH:MM ou H.MM para horas decimais
+    function parseHoursToDecimal(str) {
+      if (!str) return null;
+      const clean = str.trim();
+
+      if (clean.includes(":")) {
+        const parts = clean.split(":");
+        const h = parseInt(parts[0], 10) || 0;
+        const m = parseInt(parts[1], 10) || 0;
+        if (m >= 60) return null;
+        return h + m / 60;
       }
 
-      function hojeISO() {
-        var d = new Date();
-        var ano = d.getFullYear();
-        var mes = String(d.getMonth() + 1).padStart(2, "0");
-        var dia = String(d.getDate()).padStart(2, "0");
-        return ano + "-" + mes + "-" + dia;
+      // Caso o usuário digite número inteiro (ex: "3" -> 3 horas)
+      const num = parseDecimal(clean);
+      return num > 0 ? num : null;
+    }
+
+    function formatHoursLabel(decimalHours) {
+      const h = Math.floor(decimalHours);
+      const m = Math.round((decimalHours - h) * 60);
+      return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
+    }
+
+    function formatBRL(value) {
+      return value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+    }
+
+    function getEntries() {
+      try {
+        return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+      } catch {
+        return [];
       }
+    }
 
-      function brl(valor) {
-        var n = Number(valor) || 0;
-        var neg = n < 0;
-        var abs = Math.abs(n).toFixed(2).replace(".", ",");
-        abs = abs.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-        return (neg ? "-R$ " : "R$ ") + abs;
-      }
+    function setEntries(entries) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
+    }
 
-      function escaparHTML(txt) {
-        return String(txt || "")
-          .replace(/&/g, "&amp;")
-          .replace(/</g, "&lt;")
-          .replace(/>/g, "&gt;")
-          .replace(/"/g, "&quot;");
-      }
-
-      function salvarTudo() {
-        gravarStorage(K_REG, registros);
-        gravarStorage(K_META, meta);
-        gravarStorage(K_COMB, comb);
-      }
-
-      function filtrarRegistros() {
-        var h = hojeISO();
-        var agora = new Date();
-        return registros.filter(function (r) {
-          if (!r || !r.data) return false;
-          if (periodo === "hoje") return r.data === h;
-          if (periodo === "7dias") {
-            var lim = new Date(agora.getFullYear(), agora.getMonth(), agora.getDate() - 7);
-            var partes = r.data.split("-");
-            if (partes.length !== 3) return false;
-            var dt = new Date(Number(partes[0]), Number(partes[1]) - 1, Number(partes[2]));
-            return dt >= lim;
-          }
-          if (periodo === "mes") return r.data.slice(0, 7) === h.slice(0, 7);
-          if (periodo === "ano") return r.data.slice(0, 4) === h.slice(0, 4);
-          return true;
-        });
-      }
-
-      function render() {
-        var h = hojeISO();
-        var lista = filtrarRegistros();
-        var ganhos = 0, custos = 0, km = 0, horas = 0;
-
-        for (var i = 0; i < lista.length; i++) {
-          ganhos += Number(lista[i].ganhos) || 0;
-          custos += Number(lista[i].custos) || 0;
-          km += Number(lista[i].km) || 0;
-          horas += Number(lista[i].horas) || 0;
-        }
-        var lucro = ganhos - custos;
-
-        var nomesPeriodo = {
-          hoje: "Lucro de hoje",
-          "7dias": "Lucro (7 dias)",
-          mes: "Lucro do mês",
-          ano: "Lucro do ano",
-          tudo: "Lucro total"
-        };
-        document.getElementById("lblLucro").textContent = nomesPeriodo[periodo] || "Lucro";
-
-        var elLucro = document.getElementById("valLucro");
-        elLucro.textContent = brl(lucro);
-        elLucro.className = "big-val" + (lucro < 0 ? " neg" : "");
-        document.getElementById("lblResumo").textContent = "Ganhos " + brl(ganhos) + " · Custos " + brl(custos);
-
-        var lucroHoje = 0;
-        for (var j = 0; j < registros.length; j++) {
-          if (registros[j].data === h) {
-            lucroHoje += (Number(registros[j].ganhos) || 0) - (Number(registros[j].custos) || 0);
-          }
-        }
-        document.getElementById("valHojeMeta").textContent = brl(lucroHoje);
-        document.getElementById("inpMeta").value = meta;
-        var pctMeta = meta > 0 ? Math.min(100, Math.max(0, (lucroHoje / meta) * 100)) : 0;
-        document.getElementById("barMeta").style.width = pctMeta + "%";
-
-        document.getElementById("mCustoKm").textContent = km > 0 ? brl(custos / km) : "—";
-        document.getElementById("mMargem").textContent = ganhos > 0 ? Math.round((lucro / ganhos) * 100) + "%" : "0%";
-        document.getElementById("mHora").textContent = horas > 0 ? brl(lucro / horas) : "—";
-
-        var boxLista = document.getElementById("listaRegistros");
-        boxLista.innerHTML = "";
-        if (lista.length === 0) {
-          boxLista.innerHTML = '<div class="card muted" style="text-align:center;">Nenhum registro neste período. Toque em <strong>Registrar o dia</strong>.</div>';
-        } else {
-          for (var k = 0; k < lista.length; k++) {
-            (function (item) {
-              var lucItem = (Number(item.ganhos) || 0) - (Number(item.custos) || 0);
-              var p = (item.data || "").split("-");
-              var dataFmt = p.length === 3 ? p[2] + "/" + p[1] : item.data;
-              var div = document.createElement("div");
-              div.className = "item";
-              div.innerHTML =
-                '<div class="item-left">' +
-                  '<div><strong>' + escaparHTML(dataFmt) + '</strong> <span class="muted">Ganhos ' + brl(item.ganhos) +
-                  (Number(item.custos) > 0 ? ' · Custos ' + brl(item.custos) : '') + '</span></div>' +
-                  (item.obs ? '<div class="item-obs">' + escaparHTML(item.obs) + '</div>' : '') +
-                '</div>' +
-                '<span class="' + (lucItem < 0 ? 'neg' : 'pos') + '">' + brl(lucItem) + ' &gt;</span>';
-              div.addEventListener("click", function () { abrirModal(item); });
-              boxLista.appendChild(div);
-            })(lista[k]);
-          }
-        }
-
-        // Gráficos mensais
-        var anoAtual = h.slice(0, 4);
-        document.getElementById("lblAnoGraf").textContent = "Ano " + anoAtual;
-        var meses = ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
-        var dadosMes = [];
-        var maxG = 1;
-        for (var m = 0; m < 12; m++) {
-          var prefixo = anoAtual + "-" + String(m + 1).padStart(2, "0");
-          var gMes = 0, cMes = 0;
-          for (var r = 0; r < registros.length; r++) {
-            if ((registros[r].data || "").indexOf(prefixo) === 0) {
-              gMes += Number(registros[r].ganhos) || 0;
-              cMes += Number(registros[r].custos) || 0;
-            }
-          }
-          if (gMes > maxG) maxG = gMes;
-          dadosMes.push({ nome: meses[m], g: gMes, l: gMes - cMes });
-        }
-        var htmlMeses = "";
-        for (var x = 0; x < dadosMes.length; x++) {
-          var dm = dadosMes[x];
-          var w = Math.min(100, (dm.g / maxG) * 100);
-          htmlMeses +=
-            '<div style="margin-bottom:11px;">' +
-              '<div style="display:flex;justify-content:space-between;font-size:12px;">' +
-                '<strong>' + dm.nome + '</strong>' +
-                '<span class="muted">Ganhos ' + brl(dm.g) + ' · Lucro <strong class="' + (dm.l < 0 ? 'neg' : 'pos') + '">' + brl(dm.l) + '</strong></span>' +
-              '</div>' +
-              '<div class="bar-bg"><div class="bar-fill" style="width:' + w + '%"></div></div>' +
-            '</div>';
-        }
-        document.getElementById("listaMeses").innerHTML = htmlMeses;
-
-        // Combustível
-        document.getElementById("cKm").value = comb.km || "";
-        document.getElementById("cLitros").value = comb.litros || "";
-        document.getElementById("cPreco").value = comb.preco || "";
-        var media = comb.litros > 0 ? comb.km / comb.litros : 0;
-        document.getElementById("cMedia").textContent = media > 0 ? media.toFixed(1).replace(".", ",") + " km/L" : "—";
-        document.getElementById("cCustoKm").textContent = media > 0 ? brl(comb.preco / media) : "—";
-
-        // Anual
-        var mapaAnos = {};
-        for (var a = 0; a < registros.length; a++) {
-          var anoItem = (registros[a].data || "").slice(0, 4) || "Sem data";
-          if (!mapaAnos[anoItem]) mapaAnos[anoItem] = { ano: anoItem, g: 0, c: 0, dias: 0 };
-          mapaAnos[anoItem].g += Number(registros[a].ganhos) || 0;
-          mapaAnos[anoItem].c += Number(registros[a].custos) || 0;
-          mapaAnos[anoItem].dias += 1;
-        }
-        var chavesAnos = Object.keys(mapaAnos).sort().reverse();
-        var htmlAnos = "";
-        if (chavesAnos.length === 0) {
-          htmlAnos = '<div class="muted">Sem registros ainda.</div>';
-        } else {
-          for (var y = 0; y < chavesAnos.length; y++) {
-            var info = mapaAnos[chavesAnos[y]];
-            var lucAno = info.g - info.c;
-            htmlAnos +=
-              '<div class="item" style="cursor:default;">' +
-                '<div><strong>' + escaparHTML(info.ano) + '</strong>' +
-                '<div class="muted">' + info.dias + (info.dias === 1 ? ' dia' : ' dias') + ' · Ganhos ' + brl(info.g) + ' · Custos ' + brl(info.c) + '</div></div>' +
-                '<span class="' + (lucAno < 0 ? 'neg' : 'pos') + '">' + brl(lucAno) + '</span>' +
-              '</div>';
-          }
-        }
-        document.getElementById("listaAnos").innerHTML = htmlAnos;
-      }
-
-      function abrirModal(item) {
-        editId = item ? item.id : null;
-        document.getElementById("modalTitulo").textContent = item ? "Editar registro" : "Registrar o dia";
-        document.getElementById("fData").value = item ? item.data : hojeISO();
-        document.getElementById("fGanhos").value = item ? item.ganhos : "";
-        document.getElementById("fCustos").value = item ? item.custos : "";
-        document.getElementById("fKm").value = item ? item.km : "";
-        document.getElementById("fHoras").value = item ? item.horas : "";
-        document.getElementById("fObs").value = item ? (item.obs || "") : "";
-        document.getElementById("btnExcluir").classList.toggle("hidden", !item);
-        document.getElementById("modal").classList.add("open");
-      }
-
-      document.getElementById("btnAbrirModal").addEventListener("click", function () {
-        abrirModal(null);
+    // Mantém apenas registros dentro da janela de 5 anos
+    function cleanOldEntries() {
+      const now = Date.now();
+      const entries = getEntries();
+      const valid = entries.filter(item => {
+        const itemTime = new Date(item.date + "T12:00:00").getTime();
+        return (now - itemTime) <= FIVE_YEARS_MS;
       });
+      if (valid.length !== entries.length) {
+        setEntries(valid);
+      }
+    }
 
-      document.getElementById("btnCancelar").addEventListener("click", function () {
-        document.getElementById("modal").classList.remove("open");
-      });
+    function saveEntry() {
+      const date = document.getElementById("date").value;
+      const platform = document.getElementById("platform").value;
+      const earnings = parseDecimal(document.getElementById("earnings").value);
+      const km = parseDecimal(document.getElementById("km").value);
+      const hoursStr = document.getElementById("hours").value;
+      const hoursDecimal = parseHoursToDecimal(hoursStr);
+      const fuelPrice = parseDecimal(document.getElementById("fuelPrice").value);
+      const consumption = parseDecimal(document.getElementById("consumption").value);
+      const extraCost = parseDecimal(document.getElementById("extraCost").value);
 
-      document.getElementById("btnTema").addEventListener("click", function () {
-        document.body.classList.toggle("dark");
-        var isDark = document.body.classList.contains("dark");
-        this.textContent = isDark ? "☀️" : "🌙";
-        gravarStorage(K_DARK, isDark);
-      });
-
-      document.getElementById("inpMeta").addEventListener("change", function () {
-        meta = Number(this.value) || 0;
-        salvarTudo();
-        render();
-      });
-
-      var camposComb = ["cKm", "cLitros", "cPreco"];
-      for (var c = 0; c < camposComb.length; c++) {
-        document.getElementById(camposComb[c]).addEventListener("input", function () {
-          comb = {
-            km: Number(document.getElementById("cKm").value) || 0,
-            litros: Number(document.getElementById("cLitros").value) || 0,
-            preco: Number(document.getElementById("cPreco").value) || 0
-          };
-          salvarTudo();
-          render();
-        });
+      if (!date) {
+        alert("Selecione uma data.");
+        return;
+      }
+      if (earnings <= 0 || km <= 0) {
+        alert("Preencha o ganho bruto e os Km rodados.");
+        return;
+      }
+      if (hoursDecimal === null || hoursDecimal <= 0) {
+        alert("Informe um tempo válido no formato HH:MM (ex: 02:45). Minutos devem ir de 00 a 59.");
+        return;
+      }
+      if (fuelPrice <= 0 || consumption <= 0) {
+        alert("Informe o preço do combustível (ex: 6,50) e o consumo da moto (ex: 42).");
+        return;
       }
 
-      var chips = document.querySelectorAll("#filtros .chip");
-      for (var f = 0; f < chips.length; f++) {
-        chips[f].addEventListener("click", function () {
-          for (var idx = 0; idx < chips.length; idx++) {
-            chips[idx].classList.remove("active");
-          }
-          this.classList.add("active");
-          periodo = this.getAttribute("data-p");
-          render();
-        });
-      }
+      const litersUsed = km / consumption;
+      const fuelCost = litersUsed * fuelPrice;
+      const totalCost = fuelCost + extraCost;
+      const netProfit = earnings - totalCost;
+      const costPerKm = totalCost / km;
+      const netPerKm = netProfit / km;
+      const netPerHour = netProfit / hoursDecimal;
 
-      var navBtns = document.querySelectorAll(".nav-btn");
-      var abas = ["inicio", "graficos", "combustivel", "anual"];
-      for (var n = 0; n < navBtns.length; n++) {
-        navBtns[n].addEventListener("click", function () {
-          var destino = this.getAttribute("data-tab");
-          for (var idx = 0; idx < navBtns.length; idx++) {
-            navBtns[idx].classList.remove("active");
-          }
-          this.classList.add("active");
-          for (var a = 0; a < abas.length; a++) {
-            document.getElementById("tab-" + abas[a]).classList.toggle("hidden", abas[a] !== destino);
-          }
-        });
-      }
+      const entry = {
+        id: Date.now(),
+        date,
+        platform,
+        earnings,
+        km,
+        hoursDecimal,
+        hoursFormatted: formatHoursLabel(hoursDecimal),
+        fuelPrice,
+        consumption,
+        extraCost,
+        fuelCost,
+        totalCost,
+        netProfit,
+        costPerKm,
+        netPerKm,
+        netPerHour
+      };
 
-      document.getElementById("formReg").addEventListener("submit", function (e) {
-        e.preventDefault();
-        var novo = {
-          id: editId || String(Date.now()),
-          data: document.getElementById("fData").value || hojeISO(),
-          ganhos: Number(document.getElementById("fGanhos").value) || 0,
-          custos: Number(document.getElementById("fCustos").value) || 0,
-          km: Number(document.getElementById("fKm").value) || 0,
-          horas: Number(document.getElementById("fHoras").value) || 0,
-          obs: document.getElementById("fObs").value.trim()
-        };
-        if (editId) {
-          for (var i = 0; i < registros.length; i++) {
-            if (registros[i].id === editId) {
-              registros[i] = novo;
-              break;
-            }
-          }
-        } else {
-          registros.unshift(novo);
-        }
-        registros.sort(function (a, b) {
-          return (b.data || "").localeCompare(a.data || "");
-        });
-        salvarTudo();
-        document.getElementById("modal").classList.remove("open");
-        render();
-      });
+      const entries = getEntries();
+      entries.unshift(entry);
+      entries.sort((a, b) => b.date.localeCompare(a.date));
+      setEntries(entries);
 
-      document.getElementById("btnExcluir").addEventListener("click", function () {
-        registros = registros.filter(function (item) {
-          return item.id !== editId;
-        });
-        salvarTudo();
-        document.getElementById("modal").classList.remove("open");
-        render();
-      });
+      // Salva preço do combustível e consumo como padrão para a próxima vez
+      localStorage.setItem(CONFIG_KEY, JSON.stringify({
+        fuelPrice: document.getElementById("fuelPrice").value,
+        consumption: document.getElementById("consumption").value
+      }));
 
-      document.getElementById("btnExportJson").addEventListener("click", function () {
-        var payload = JSON.stringify({
-          exportadoEm: new Date().toISOString(),
-          meta: meta,
-          comb: comb,
-          registros: registros
-        }, null, 2);
-        var blob = new Blob([payload], { type: "application/json" });
-        var url = URL.createObjectURL(blob);
-        var a = document.createElement("a");
-        a.href = url;
-        a.download = "custo-por-km-" + hojeISO() + ".json";
-        a.click();
-        setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
-      });
-
-      document.getElementById("inpImportJson").addEventListener("change", function (e) {
-        var file = e.target.files && e.target.files[0];
-        if (!file) return;
-        var reader = new FileReader();
-        reader.onload = function () {
-          try {
-            var dados = JSON.parse(String(reader.result));
-            if (Array.isArray(dados)) {
-              registros = dados;
-            } else if (dados && Array.isArray(dados.registros)) {
-              registros = dados.registros;
-              if (typeof dados.meta === "number") meta = dados.meta;
-              if (dados.comb && typeof dados.comb === "object") comb = dados.comb;
-            } else {
-              alert("Arquivo JSON inválido.");
-              return;
-            }
-            salvarTudo();
-            render();
-            alert("Backup restaurado com sucesso!");
-          } catch (err) {
-            alert("Não foi possível ler o arquivo.");
-          }
-        };
-        reader.readAsText(file);
-        this.value = "";
-      });
-
-      document.getElementById("btnExportCsv").addEventListener("click", function () {
-        var linhas = ["Data;Ganhos;Custos;Lucro;Km;Horas;Observacao"];
-        for (var i = 0; i < registros.length; i++) {
-          var r = registros[i];
-          var luc = (Number(r.ganhos) || 0) - (Number(r.custos) || 0);
-          linhas.push([
-            r.data || "",
-            String(r.ganhos || 0).replace(".", ","),
-            String(r.custos || 0).replace(".", ","),
-            String(luc).replace(".", ","),
-            String(r.km || 0).replace(".", ","),
-            String(r.horas || 0).replace(".", ","),
-            '"' + String(r.obs || "").replace(/"/g, '""') + '"'
-          ].join(";"));
-        }
-        var blob = new Blob(["\uFEFF" + linhas.join("\n")], { type: "text/csv;charset=utf-8;" });
-        var url = URL.createObjectURL(blob);
-        var a = document.createElement("a");
-        a.href = url;
-        a.download = "custo-por-km-" + hojeISO() + ".csv";
-        a.click();
-        setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
-      });
+      // Limpa campos variáveis
+      document.getElementById("earnings").value = "";
+      document.getElementById("km").value = "";
+      document.getElementById("hours").value = "";
+      document.getElementById("extraCost").value = "";
+      document.getElementById("hoursPreview").textContent = "Ex: 02:45 = 2,75 horas";
+      document.getElementById("hoursPreview").style.color = "#94a3b8";
 
       render();
-    })();
+    }
+
+    function deleteEntry(id) {
+      if (!confirm("Apagar este registro?")) return;
+      const updated = getEntries().filter(item => item.id !== id);
+      setEntries(updated);
+      render();
+    }
+
+    function render() {
+      const filter = document.getElementById("periodFilter").value;
+      const now = new Date();
+      const currentYear = String(now.getFullYear());
+      const currentMonth = `${currentYear}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+
+      let entries = getEntries();
+      if (filter === "month") {
+        entries = entries.filter(e => e.date.startsWith(currentMonth));
+      } else if (filter === "year") {
+        entries = entries.filter(e => e.date.startsWith(currentYear));
+      }
+
+      let totalNet = 0;
+      let totalCost = 0;
+      let totalKm = 0;
+      let totalHours = 0;
+
+      entries.forEach(e => {
+        totalNet += e.netProfit;
+        totalCost += e.totalCost;
+        totalKm += e.km;
+        totalHours += e.hoursDecimal;
+      });
+
+      const avgCostKm = totalKm > 0 ? totalCost / totalKm : 0;
+      const avgNetKm = totalKm > 0 ? totalNet / totalKm : 0;
+      const avgNetHour = totalHours > 0 ? totalNet / totalHours : 0;
+
+      document.getElementById("statNet").textContent = formatBRL(totalNet);
+      document.getElementById("statPerHour").textContent = `${formatBRL(avgNetHour)}/h`;
+      document.getElementById("statCostKm").textContent = `${formatBRL(avgCostKm)}/km`;
+      document.getElementById("statNetKm").textContent = `${formatBRL(avgNetKm)}/km`;
+      document.getElementById("recordCount").textContent = `${entries.length} registro(s)`;
+
+      const listEl = document.getElementById("historyList");
+      if (entries.length === 0) {
+        listEl.innerHTML = `<div class="empty-state">Nenhum registro neste período.</div>`;
+        return;
+      }
+
+      listEl.innerHTML = entries.map(e => {
+        const [y, m, d] = e.date.split("-");
+        const dateBR = `${d}/${m}/${y}`;
+        return `
+          <div class="history-item">
+            <div class="history-top">
+              <div>
+                <span class="history-date">${dateBR}</span>
+                <span class="history-badge">${e.platform}</span>
+              </div>
+              <button class="btn-danger" onclick="deleteEntry(${e.id})">Excluir</button>
+            </div>
+            <div class="history-details">
+              Bruto: <strong>${formatBRL(e.earnings)}</strong> • Líquido: <strong style="color:#22c55e">${formatBRL(e.netProfit)}</strong><br/>
+              Rodado: <strong>${e.km.toFixed(1).replace(".", ",")} km</strong> em <strong>${e.hoursFormatted}h</strong> (${formatBRL(e.netPerHour)}/h)<br/>
+              Gasolina: R$ ${e.fuelPrice.toFixed(2).replace(".", ",")}/L • Custo: <strong>${formatBRL(e.costPerKm)}/km</strong>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function exportBackup() {
+      const entries = getEntries();
+      const blob = new Blob([JSON.stringify(entries, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `backup-custo-por-km-${new Date().toISOString().split("T")[0]}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function importBackup(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const imported = JSON.parse(e.target.result);
+          if (!Array.isArray(imported)) throw new Error();
+          const current = getEntries();
+          const mergedMap = new Map();
+          [...current, ...imported].forEach(item => mergedMap.set(item.id, item));
+          const merged = Array.from(mergedMap.values()).sort((a, b) => b.date.localeCompare(a.date));
+          setEntries(merged);
+          cleanOldEntries();
+          render();
+          alert(`Backup importado com sucesso! Total de ${merged.length} registros.`);
+        } catch {
+          alert("Arquivo de backup inválido.");
+        }
+      };
+      reader.readAsText(file);
+    }
   </script>
 </body>
 </html>
